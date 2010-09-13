@@ -1,0 +1,38 @@
+Mongoid::DynamicFinders
+=======================
+
+This is a nasty hack that allows you to fake out dynamic finders even though Mongoid doesn't support them.
+
+This library currently provides:
+
+  Mongoid::FindBy         - include this if you just need find_by_(attr)
+  Mongoid::FindOrCreateBy - include this if you only use 
+			    find_or_create_by_(attr)
+  Mongoid::DynamicFinders - includes both of the above.
+
+This module meets my projects minimum requirements.  You may need more (like find_by_name_and_underpants_size).  Fork & tickle me.
+
+- @jamesotron
+
+Example
+=======
+
+class Person # app/models/person.rb
+  include Mongoid::Document
+  include Mongoid::FindBy
+
+  field :name, :type => String
+end
+
+class Preference
+  include Mongoid::Document
+  include Mongoid::DynamicFinders
+
+  field :name, :type => String
+end
+
+Person.find_by_name('James')
+=> #<Person _id: 4c8e9bbe3716b709ba000001, name: "James">
+Preference.find_or_create_by_name('black, no sugar.')
+=> #<Preference _id: 4c8ea3723716b70b3a000001, name: "black, no sugar">
+
