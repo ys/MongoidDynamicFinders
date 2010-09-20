@@ -25,7 +25,7 @@ module Sociable
                 elsif methods.member? :method_missing_without_find_by
                   send(:method_missing_without_find_by, method, *args)
                 else 
-                  super
+                  super(method, *args)
                 end
               end
               alias_method_chain :method_missing, :find_by
