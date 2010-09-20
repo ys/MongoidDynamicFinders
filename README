@@ -23,18 +23,13 @@ class Person # app/models/person.rb
   include Mongoid::Document
   include Mongoid::FindBy
 
-  field :name, :type => String
+  field :first_name, :type => String
+  field :last_name, :type => String
 end
 
-class Preference
-  include Mongoid::Document
-  include Mongoid::DynamicFinders
-
-  field :name, :type => String
-end
-
-Person.find_by_name('James')
-=> #<Person _id: 4c8e9bbe3716b709ba000001, name: "James">
-Preference.find_or_create_by_name('black, no sugar.')
-=> #<Preference _id: 4c8ea3723716b70b3a000001, name: "black, no sugar">
-
+Person.find_by_first_name('James')
+=> #<Mongoid::Criteria:0x1788b28 @selector={:first_name=>"James"}, @options={}, @klass=Person, @documents=[]>
+Person.find_by_first_name('James')
+=> #<Person _id: 4c96bae53716b716b3000001, first_name: "James", last_name: "Harton", preference_ids: []>
+Person.find_by_first_name_and_last_name('James', 'Joyce')
+=> #<Person _id: 4c96bb273716b716be000003, first_name: "James", last_name: "Joyce", preference_ids: []>
