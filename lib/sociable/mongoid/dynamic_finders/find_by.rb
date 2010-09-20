@@ -6,7 +6,10 @@ module Sociable
         def self.included(base)
           base.class_eval do
             class << self
-              define_method :method_missing_with_find_by do |method,*args|
+              old_method_missing = if methods(false).member? :method_missing
+                                     method(:method_missing)
+                                   end
+              define_method :method_missing do |method,*args|
                 if (match = method.to_s.match /^find_(all_by|first_by|last_by|by)_([a-zA-Z_]+)$/)
                  tokens =  match[2].split('_and_')
                  raise ArgumentError, "number of attributes and arguments don't match (#{tokens.size} and #{args.size})." if tokens.size != args.size
@@ -22,13 +25,12 @@ module Sociable
                  else
                    where(query).first
                  end
-                elsif methods.member? :method_missing_without_find_by
-                  send(:method_missing_without_find_by, method, *args)
+                elsif old_method_missing
+                  old_method_missing.bind(self).call
                 else 
                   super(method, *args)
                 end
               end
-              alias_method_chain :method_missing, :find_by
             end
           end
         end
